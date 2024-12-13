@@ -4,11 +4,14 @@ public class CharacterMovement : MonoBehaviour
 {
     private Rigidbody rb;
 
-    private int currentInput;
+    private float currentInput;
     private bool canMove = true;
 
     [SerializeField] private float moveDistance = 1;
-    [SerializeField] private float moveSpeed = 1;
+    [SerializeField][Range(0.1f, 1f)] private float moveSensitivity = 1f;
+    [SerializeField][Range(0.1f, 15f)] private float rotateSensitivity = 1f;
+
+    private Vector3 vel = Vector3.zero;
 
     private void Start()
     {
@@ -23,34 +26,36 @@ public class CharacterMovement : MonoBehaviour
 
         int input = Mathf.RoundToInt(xValue);
 
+        float endPoint = input * moveDistance;
+
         if (input != 0 && canMove)
         {
-            if (currentInput + input > moveDistance || currentInput + input < -moveDistance) return;
+            if (currentInput + endPoint > moveDistance || currentInput + endPoint < -moveDistance) return;
 
             canMove = false;
 
-            if (currentInput != currentInput + input)
+            if (currentInput != endPoint)
             {
-                currentInput += input;
+                currentInput = endPoint;
             }
         }
         else if (input == 0 && canMove == false)
         {
             canMove = true;
         }
-    }
 
-    private void FixedUpdate()
-    {
-        Vector3 move = new Vector3(currentInput * moveDistance, rb.position.y, rb.position.z);
-
-        rb.velocity = Vector3.Lerp(rb.position, move, moveSpeed * Time.fixedDeltaTime);
+        MoveCharacter();
     }
 
     private void MoveCharacter()
     {
+        Vector3 targetPosition = new Vector3(currentInput, rb.position.y, rb.position.z);
+        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref vel, moveSensitivity);
 
+        Vector3 direction = targetPosition - transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x);
 
-        Debug.Log("Move Position: " + currentInput);
+        //Quaternion targetRotation = Quaternion.Euler(0, angle, 0);
+        //transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotateSensitivity * Time.deltaTime);
     }
 }

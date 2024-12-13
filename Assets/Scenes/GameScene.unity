@@ -423,8 +423,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 771daadb8ef9d034393336a7ab76f836, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveDistance: 1
-  moveSpeed: 14.33
+  moveDistance: 3
+  moveSensitivity: 0.117
+  rotateSensitivity: 13.14
 --- !u!54 &1295962730
 Rigidbody:
   m_ObjectHideFlags: 0
